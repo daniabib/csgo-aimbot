@@ -1,5 +1,7 @@
 ## Parte 1: Capturando frames
 - ffmpeg
+- mss
+- espacos de cor e deteccao de objetos: https://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.888.3675&rep=rep1&type=pdf ; https://towardsdatascience.com/understand-and-visualize-color-spaces-to-improve-your-machine-learning-and-deep-learning-models-4ece80108526 ; https://www.hindawi.com/journals/jat/2018/2365414/
 
 ## Parte 2: Contruir base de dados
 - OpenLabelling
@@ -12,6 +14,8 @@ https://python-mss.readthedocs.io/
 
 ## Parte 5: Controlar mira
 https://pyautogui.readthedocs.io/en/latest/
+
+- Definir classe point.
 
 
 ## REFERÊNCIAS
