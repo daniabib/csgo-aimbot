@@ -16,7 +16,8 @@ https://python-mss.readthedocs.io/
 https://pyautogui.readthedocs.io/en/latest/
 
 - Definir classe point.
-
+- Tentando resolver problema com mouse: Bibliotecas (pyautogui, pynput, mouse) funcionam com desktop padrao, mas nao funcionam dentro do jogo. A que chega mais proximo e autogui. 
+- Provavelmente deve ser rodado com sudo
 
 ## REFERÊNCIAS
 
