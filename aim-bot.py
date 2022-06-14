@@ -10,6 +10,8 @@ import pyautogui
 
 class Point:
     def __init__(self, x, y) -> None:
+        self.x = x
+        self.y = y
         self.coordinates = np.array([x, y])
 
     def __sub__(self, other) -> float:
@@ -17,7 +19,7 @@ class Point:
         return np.linalg.norm(self.coordinates - other.coordinates)
 
     def __repr__(self) -> str:
-        return f"Point(x={self.coordinates[0]}, y={self.coordinates[1]})"
+        return f"Point(x={self.x}, y={self.y})"
 
 
 def calc_target(x, y, w, h) -> Point:
@@ -26,32 +28,32 @@ def calc_target(x, y, w, h) -> Point:
     return Point(x_coord.item(), y_coord.item())
 
 
-def move_mouse(aim_center, target) -> None:
-    UP = (0, -1)
-    UP_RIGHT = (1, -1)
-    RIGHT = (1, 0)
-    DOWN_RIGHT = (1, 1)
-    DOWN = (0, 1)
-    DOWN_LEFT = (-1, 1)
-    LEFT = (-1, 0)
-    UP_LEFT = (-1, -1)
+def move_mouse(aim_center, target, speed=1) -> None:
+    UP = (0, -speed)
+    UP_RIGHT = (speed, -speed)
+    RIGHT = (speed, 0)
+    DOWN_RIGHT = (speed, speed)
+    DOWN = (0, speed)
+    DOWN_LEFT = (-speed, speed)
+    LEFT = (-speed, 0)
+    UP_LEFT = (-speed, -speed)
 
     if aim_center.x < target.x and aim_center.y < target.y:
-        pyautogui.moveRel(DOWN_RIGHT)
+        pyautogui.move(DOWN_RIGHT)
     elif aim_center.x < target.x and aim_center.y > target.y:
-        pyautogui.moveRel(UP_RIGHT)
+        pyautogui.move(UP_RIGHT)
     elif aim_center.x > target.x and aim_center.y < target.y:
-        pyautogui.moveRel(DOWN_LEFT)
+        pyautogui.move(DOWN_LEFT)
     elif aim_center.x > target.x and aim_center.y > target.y:
-        pyautogui.moveRel(UP_LEFT)
+        pyautogui.move(UP_LEFT)
     elif aim_center.x == target.x and aim_center.y < target.y:
-        pyautogui.moveRel(DOWN)
+        pyautogui.move(DOWN)
     elif aim_center.x == target.x and aim_center.y > target.y:
-        pyautogui.moveRel(UP)
+        pyautogui.move(UP)
     elif aim_center.x < target.x and aim_center.y == target.y:
-        pyautogui.moveRel(RIGHT)
+        pyautogui.move(RIGHT)
     elif aim_center.x > target.x and aim_center.y == target.y:
-        pyautogui.moveRel(LEFT)
+        pyautogui.move(LEFT)
     else:
         print("AT SAME POSITION")
 
@@ -87,28 +89,24 @@ with mss() as sct:
         # print("fps: {}".format(1 / (time.time() - last_time)))
 
         # TEST
-        TEST_TARGET = Point(x=1580, y=400)
+        # TEST_TARGET = Point(x=1580, y=400)
 
 
         # Get bboxes
         for x, y, w, h, confidence, cls in results.xywh[0]:
-            if cls == 2:
+            if cls == 0 or cls == 1:
                 target = calc_target(x, y, w, h)
-                if on_target(AIM_CENTER, target):
-                    pyautogui.rightClick()
-                else:
-                    print("NOT ON TARGET.")
-                    move_mouse(AIM_CENTER, target)
-                # print(pos_to_shoot)
-                # print(pyautogui.position())
-                # pyautogui.moveTo(pos_to_shoot, duration=1)
-                # pyautogui.click()
+                print(target)
+                while not on_target(AIM_CENTER, target):
+                    print(target)
 
+                    # print("NOT ON TARGET.")
+                    # move_mouse(AIM_CENTER, target, speed=3)
+                    pyautogui.moveTo(target.x, target.y)
+                pyautogui.click()
+
+        print("OUT LOOP")
         if cv.waitKey(1) == ord('q'):
             cv.destroyAllWindows()
             break
 
-
-# Get bboxes
-
-# Shoot each bbox detected
