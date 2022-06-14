@@ -1,5 +1,4 @@
 import time
-from turtle import right
 
 import torch
 from mss.linux import MSS as mss
@@ -7,15 +6,14 @@ import cv2 as cv
 import numpy as np
 import pyautogui
 
-# TODO: Entender porque mouse nao funciona direito
 
 
 class Point:
     def __init__(self, x, y) -> None:
         self.coordinates = np.array([x, y])
 
-    def __sub__(self, other):
-        """Calculate euclidean distance between two Point objects."""
+    def __sub__(self, other) -> float:
+        """Calculates euclidean distance between two Points."""
         return np.linalg.norm(self.coordinates - other.coordinates)
 
     def __repr__(self) -> str:
@@ -29,17 +27,33 @@ def calc_target(x, y, w, h) -> Point:
 
 
 def move_mouse(aim_center, target) -> None:
-    up = (0, -1)
-    up_right = (1, -1)
-    right = (1, 0)
-    down_right = (1, 1)
-    down = (0, 1)
-    down_left = (-1, 1)
-    left = (-1, 0)
+    UP = (0, -1)
+    UP_RIGHT = (1, -1)
+    RIGHT = (1, 0)
+    DOWN_RIGHT = (1, 1)
+    DOWN = (0, 1)
+    DOWN_LEFT = (-1, 1)
+    LEFT = (-1, 0)
+    UP_LEFT = (-1, -1)
 
-    if aim_center[0] < target[0]:
-        _
-
+    if aim_center.x < target.x and aim_center.y < target.y:
+        pyautogui.moveRel(DOWN_RIGHT)
+    elif aim_center.x < target.x and aim_center.y > target.y:
+        pyautogui.moveRel(UP_RIGHT)
+    elif aim_center.x > target.x and aim_center.y < target.y:
+        pyautogui.moveRel(DOWN_LEFT)
+    elif aim_center.x > target.x and aim_center.y > target.y:
+        pyautogui.moveRel(UP_LEFT)
+    elif aim_center.x == target.x and aim_center.y < target.y:
+        pyautogui.moveRel(DOWN)
+    elif aim_center.x == target.x and aim_center.y > target.y:
+        pyautogui.moveRel(UP)
+    elif aim_center.x < target.x and aim_center.y == target.y:
+        pyautogui.moveRel(RIGHT)
+    elif aim_center.x > target.x and aim_center.y == target.y:
+        pyautogui.moveRel(LEFT)
+    else:
+        print("AT SAME POSITION")
 
 def on_target(aim_center, target, precision=0.5) -> bool:
     return aim_center - target < precision
@@ -72,10 +86,19 @@ with mss() as sct:
 
         # print("fps: {}".format(1 / (time.time() - last_time)))
 
+        # TEST
+        TEST_TARGET = Point(x=1580, y=400)
+
+
         # Get bboxes
         for x, y, w, h, confidence, cls in results.xywh[0]:
             if cls == 2:
-                pos_to_shoot = calc_target(x, y, w, h)
+                target = calc_target(x, y, w, h)
+                if on_target(AIM_CENTER, target):
+                    pyautogui.rightClick()
+                else:
+                    print("NOT ON TARGET.")
+                    move_mouse(AIM_CENTER, target)
                 # print(pos_to_shoot)
                 # print(pyautogui.position())
                 # pyautogui.moveTo(pos_to_shoot, duration=1)
