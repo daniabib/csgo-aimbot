@@ -27,51 +27,17 @@ def calc_target(x, y, w, h) -> Point:
     return Point(x_coord.item(), y_coord.item())
 
 
-def move_mouse(aim_center, target, speed=1) -> None:
-    UP = (0, -speed)
-    UP_RIGHT = (speed, -speed)
-    RIGHT = (speed, 0)
-    DOWN_RIGHT = (speed, speed)
-    DOWN = (0, speed)
-    DOWN_LEFT = (-speed, speed)
-    LEFT = (-speed, 0)
-    UP_LEFT = (-speed, -speed)
-
-    if aim_center.x < target.x and aim_center.y < target.y:
-        pyautogui.move(DOWN_RIGHT)
-        target.x -= speed
-        target.y -= speed
-    elif aim_center.x < target.x and aim_center.y > target.y:
-        pyautogui.move(UP_RIGHT)
-        target.x -= speed
-        target.y += speed
-    elif aim_center.x > target.x and aim_center.y < target.y:
-        pyautogui.move(DOWN_LEFT)
-        target.x += speed
-        target.y -= speed
-    elif aim_center.x > target.x and aim_center.y > target.y:
-        pyautogui.move(UP_LEFT)
-        target.x += speed
-        target.y += speed
-    elif aim_center.x == target.x and aim_center.y < target.y:
-        pyautogui.move(DOWN)
-        target.y -= speed
-    elif aim_center.x == target.x and aim_center.y > target.y:
-        pyautogui.move(UP)
-        target.y += speed
-    elif aim_center.x < target.x and aim_center.y == target.y:
-        pyautogui.move(RIGHT)
-        target.x -= speed
-    elif aim_center.x > target.x and aim_center.y == target.y:
-        pyautogui.move(LEFT)
-        target.x += speed
-    else:
-        print("AT SAME POSITION")
-
+def shoot(x, y):
+    pyautogui.moveTo(x, y)
+    time.sleep(0.05)
+    pyautogui.mouseDown()
+    time.sleep(0.1)
+    pyautogui.mouseUp()
 
 def on_target(aim_center, target, precision=0.5) -> bool:
     return aim_center - target < precision
 
+# TODO: Definir função para achar o alvo mais próximo. Melhorar precisão do target.
 
 # AIM_CENTER = Point(x=716, y=428)
 AIM_CENTER = Point(x=960, y=540)
@@ -107,7 +73,7 @@ with mss() as sct:
         # Get bboxes
         print(pyautogui.position())
         for x, y, w, h, confidence, cls in results.xywh[0]:
-            if (cls == 2 or cls == 3) and confidence > .8:
+            if (cls == 2 or cls == 3) and confidence > .5:
                 target = calc_target(x, y, w, h)
                 # print(target)
                 # while not on_target(AIM_CENTER, target, precision=5):
@@ -118,7 +84,7 @@ with mss() as sct:
                 pyautogui.moveTo(target.x, target.y,
                                  duration=pyautogui.MINIMUM_DURATION)
                 if on_target(AIM_CENTER, target, precision=20):
-                    pyautogui.click()
+                    shoot(target.x, target.y)
 
         # print("OUT LOOP")
         if cv.waitKey(1) == ord('q'):
