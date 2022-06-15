@@ -1,4 +1,3 @@
-from dataclasses import dataclass
 import time
 
 import torch
@@ -21,34 +20,42 @@ class Point:
     def __repr__(self) -> str:
         return f"Point(x={self.x}, y={self.y})"
 
-@dataclass
-class Target:
-    x: float
-    y: float
-    w: float
-    h: float 
-    confidence: float 
-    cls: float
 
-def get_targets(results: list, cls: list[int]):
+class Target:
+    def __init__(self, target: torch.Tensor) -> None:
+        self.x: float = target[0].item()
+        self.y: float = target[1].item()
+        self.w: float = target[2].item()
+        self.h: float = target[3].item()
+        self.confidence: float = target[4].item()
+        self.label: int = int(target[5].item())
+        self.tensor: torch.Tensor = target
+        self.coordinates = np.array([self.x, self.y])
+    # def __sub__(self, other) -> float:
+    #     """Calculates euclidean distance between two Targets."""
+    #     return np.linalg.norm(np.array([self.x, self.y]) - np.array([other.x, other.y]))
+
+    def __repr__(self) -> str:
+        return "Target({self.label}: x={self.x}, y={self.y})"
+
+def get_targets(results: list, cls: list[int]) -> list[Target]:
     """Returns a list with results filtered by the classes specified in the cls argument."""
-    return [target for target in results.xywh[0] if target[5] in cls]
+    return [Target(target) for target in results.xywh[0] if target[5] in cls]
 
 
 def calc_target(target) -> Point:
-    x, y, w, h, _, _ = target
+    # x, y, w, h, _, _ = target
     # x_coord = x - w / 2
     # y_coord = y + h / 2
-    x_coord = x
-    y_coord = y
-    return Point(x_coord.item(), y_coord.item())
+
+    return Point(target[0].item(), target[1].item())
 
 
 def on_target(aim_center, target, precision=0.5) -> bool:
     return aim_center - target < precision
 
 
-def shoot():
+def shoot() -> None:
     pyautogui.mouseDown()
     time.sleep(0.1)
     pyautogui.mouseUp()
@@ -56,53 +63,58 @@ def shoot():
 
 # TODO: Definir função para achar o alvo mais próximo. Melhorar precisão do target.
 
-AIM_CENTER = Point(x=960, y=540)
+AIM_CENTER=Point(x=960, y=540)
 
-# Load YOLOv5 with PyTorch Hub from Ultralytics
-model = torch.hub.load("ultralytics/yolov5", "custom",
-                       path="csgo-detection-v2.pt")
 
-if torch.cuda.is_available():
-    model.cuda()
+def main():
+    # Load YOLOv5 with PyTorch Hub from Ultralytics
+    model=torch.hub.load("ultralytics/yolov5", "custom",
+                           path="csgo-detection-v2.pt")
 
-time.sleep(2)
+    if torch.cuda.is_available():
+        model.cuda()
 
-# MAIN LOOP
-with mss() as sct:
-    # monitor = {"top": 70, "left": 80, "width": 1280, "height": 720}
-    while "Screen Capturing":
-        last_time = time.time()
-        # Grab Screen
-        screenshot = np.array(sct.grab(sct.monitors[1]))
+    time.sleep(2)
 
-        # Prediction
-        results = model(screenshot)
-        results.render()
+    # MAIN LOOP
+    with mss() as sct:
+        # monitor = {"top": 70, "left": 80, "width": 1280, "height": 720}
+        while "Screen Capturing":
+            last_time=time.time()
+            # Grab Screen
+            screenshot=np.array(sct.grab(sct.monitors[1]))
 
-        cv.imshow('CV TEST', results.imgs[0])
+            # Prediction
+            results=model(screenshot)
+            results.render()
 
-        print("fps: {}".format(1 / (time.time() - last_time)))
+            cv.imshow('CV TEST', results.imgs[0])
 
-        # Get bboxes
-        # for x, y, w, h, confidence, cls in results.xywh[0]:
-        #     if (cls == 2 or cls == 3) and confidence > .5:
-        #         target = calc_target(x, y, w, h)
-        # print(target)
-        # while not on_target(AIM_CENTER, target, precision=5):
-        #     print(target)
+            # print("fps: {}".format(1 / (time.time() - last_time)))
 
-        #     # print("NOT ON TARGET.")
-        #     move_mouse(AIM_CENTER, target, speed=3)
-        targets = get_targets(results, cls=[2, 3])
-        for target in targets:
-            target = calc_target(target)
-            pyautogui.moveTo(target.x, target.y,
-                             #  duration=pyautogui.MINIMUM_DURATION,
-                             tween=pyautogui.easeOutQuad)
-            if on_target(AIM_CENTER, target, precision=20):
-                shoot()
+            # Get bboxes
+            # for x, y, w, h, confidence, cls in results.xywh[0]:
+            #     if (cls == 2 or cls == 3) and confidence > .5:
+            #         target = calc_target(x, y, w, h)
+            # print(target)
+            # while not on_target(AIM_CENTER, target, precision=5):
+            #     print(target)
 
-        # print("OUT LOOP")
-        if cv.waitKey(1) == ord('q'):
-            cv.destroyAllWindows()
-            break
+            #     # print("NOT ON TARGET.")
+            #     move_mouse(AIM_CENTER, target, speed=3)
+            targets=get_targets(results, cls=[0, 1])
+            for target in targets:
+                # target = calc_target(target)
+                pyautogui.moveTo(target.x, target.y,
+                                 tween=pyautogui.easeOutQuad)
+                if on_target(AIM_CENTER, target, precision=20):
+                    shoot()
+                print(target)
+            # print("OUT LOOP")
+            if cv.waitKey(1) == ord('q'):
+                cv.destroyAllWindows()
+                break
+
+
+if __name__ == "__main__":
+    main()
