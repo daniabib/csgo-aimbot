@@ -1,3 +1,4 @@
+from dataclasses import dataclass
 import time
 
 import torch
@@ -20,26 +21,41 @@ class Point:
     def __repr__(self) -> str:
         return f"Point(x={self.x}, y={self.y})"
 
+@dataclass
+class Target:
+    x: float
+    y: float
+    w: float
+    h: float 
+    confidence: float 
+    cls: float
 
-def calc_target(x, y, w, h) -> Point:
-    x_coord = x - w / 4
-    y_coord = y + h / 4
+def get_targets(results: list, cls: list[int]):
+    """Returns a list with results filtered by the classes specified in the cls argument."""
+    return [target for target in results.xywh[0] if target[5] in cls]
+
+
+def calc_target(target) -> Point:
+    x, y, w, h, _, _ = target
+    # x_coord = x - w / 2
+    # y_coord = y + h / 2
+    x_coord = x
+    y_coord = y
     return Point(x_coord.item(), y_coord.item())
 
-
-def shoot(x, y):
-    pyautogui.moveTo(x, y)
-    time.sleep(0.05)
-    pyautogui.mouseDown()
-    time.sleep(0.1)
-    pyautogui.mouseUp()
 
 def on_target(aim_center, target, precision=0.5) -> bool:
     return aim_center - target < precision
 
+
+def shoot():
+    pyautogui.mouseDown()
+    time.sleep(0.1)
+    pyautogui.mouseUp()
+
+
 # TODO: Definir função para achar o alvo mais próximo. Melhorar precisão do target.
 
-# AIM_CENTER = Point(x=716, y=428)
 AIM_CENTER = Point(x=960, y=540)
 
 # Load YOLOv5 with PyTorch Hub from Ultralytics
@@ -65,26 +81,26 @@ with mss() as sct:
 
         cv.imshow('CV TEST', results.imgs[0])
 
-        # print("fps: {}".format(1 / (time.time() - last_time)))
-
-        # TEST
-        # TEST_TARGET = Point(x=1580, y=400)
+        print("fps: {}".format(1 / (time.time() - last_time)))
 
         # Get bboxes
-        print(pyautogui.position())
-        for x, y, w, h, confidence, cls in results.xywh[0]:
-            if (cls == 2 or cls == 3) and confidence > .5:
-                target = calc_target(x, y, w, h)
-                # print(target)
-                # while not on_target(AIM_CENTER, target, precision=5):
-                #     print(target)
+        # for x, y, w, h, confidence, cls in results.xywh[0]:
+        #     if (cls == 2 or cls == 3) and confidence > .5:
+        #         target = calc_target(x, y, w, h)
+        # print(target)
+        # while not on_target(AIM_CENTER, target, precision=5):
+        #     print(target)
 
-                #     # print("NOT ON TARGET.")
-                #     move_mouse(AIM_CENTER, target, speed=3)
-                pyautogui.moveTo(target.x, target.y,
-                                 duration=pyautogui.MINIMUM_DURATION)
-                if on_target(AIM_CENTER, target, precision=20):
-                    shoot(target.x, target.y)
+        #     # print("NOT ON TARGET.")
+        #     move_mouse(AIM_CENTER, target, speed=3)
+        targets = get_targets(results, cls=[2, 3])
+        for target in targets:
+            target = calc_target(target)
+            pyautogui.moveTo(target.x, target.y,
+                             #  duration=pyautogui.MINIMUM_DURATION,
+                             tween=pyautogui.easeOutQuad)
+            if on_target(AIM_CENTER, target, precision=20):
+                shoot()
 
         # print("OUT LOOP")
         if cv.waitKey(1) == ord('q'):
