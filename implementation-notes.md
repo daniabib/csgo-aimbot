@@ -22,7 +22,15 @@ https://pyautogui.readthedocs.io/en/latest/
 
 SOLUCAO: Coloar "Raw input: OFF" na opcao dentro do jogo!
 
-Melhorar mira: Pesquisar/testar tweens 
+Melhorar mira: Pesquisar/
+
+Testar tweens: https://pyautogui.readthedocs.io/en/latest/mouse.html#tween-easing-functions
+
+Criei duas classes para representar os alvos:
+- Point: Mais geral, implementa metodos __sub__ para calcular distancias
+- Target: Armazena infos das predicoes do Yolo. Tem atributo coordinates para aproveitar o metodo sub de Point.
+
+
 
 
 ## REFERÊNCIAS

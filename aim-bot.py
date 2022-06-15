@@ -31,24 +31,19 @@ class Target:
         self.label: int = int(target[5].item())
         self.tensor: torch.Tensor = target
         self.coordinates = np.array([self.x, self.y])
-    # def __sub__(self, other) -> float:
-    #     """Calculates euclidean distance between two Targets."""
-    #     return np.linalg.norm(np.array([self.x, self.y]) - np.array([other.x, other.y]))
 
     def __repr__(self) -> str:
-        return "Target({self.label}: x={self.x}, y={self.y})"
-
-def get_targets(results: list, cls: list[int]) -> list[Target]:
-    """Returns a list with results filtered by the classes specified in the cls argument."""
-    return [Target(target) for target in results.xywh[0] if target[5] in cls]
+        return f"Target({self.label}: x={self.x}, y={self.y})"
 
 
-def calc_target(target) -> Point:
-    # x, y, w, h, _, _ = target
-    # x_coord = x - w / 2
-    # y_coord = y + h / 2
+def get_targets(results: list, labels: list[int]) -> list[Target]:
+    """Returns a list with results filtered by the classes specified in the labels argument."""
+    return [Target(target) for target in results.xywh[0] if target[5] in labels]
 
-    return Point(target[0].item(), target[1].item())
+
+def sort_targets(targets: list[Target], aim_center: Point) -> list[Target]:
+    """Sort targets by distance from the aim center."""
+    return sorted(targets, key=lambda target: aim_center - target)
 
 
 def on_target(aim_center, target, precision=0.5) -> bool:
@@ -61,14 +56,12 @@ def shoot() -> None:
     pyautogui.mouseUp()
 
 
-# TODO: Definir função para achar o alvo mais próximo. Melhorar precisão do target.
-
-AIM_CENTER=Point(x=960, y=540)
+AIM_CENTER = Point(x=960, y=540)
 
 
 def main():
     # Load YOLOv5 with PyTorch Hub from Ultralytics
-    model=torch.hub.load("ultralytics/yolov5", "custom",
+    model = torch.hub.load("ultralytics/yolov5", "custom",
                            path="csgo-detection-v2.pt")
 
     if torch.cuda.is_available():
@@ -80,37 +73,32 @@ def main():
     with mss() as sct:
         # monitor = {"top": 70, "left": 80, "width": 1280, "height": 720}
         while "Screen Capturing":
-            last_time=time.time()
+            last_time = time.time()
             # Grab Screen
-            screenshot=np.array(sct.grab(sct.monitors[1]))
+            screenshot = np.array(sct.grab(sct.monitors[1]))
 
             # Prediction
-            results=model(screenshot)
+            results = model(screenshot)
             results.render()
 
             cv.imshow('CV TEST', results.imgs[0])
 
-            # print("fps: {}".format(1 / (time.time() - last_time)))
+            targets = get_targets(results, labels=[0, 1])
+            
+            if targets:
+                target = sort_targets(targets, AIM_CENTER)[0]
 
-            # Get bboxes
-            # for x, y, w, h, confidence, cls in results.xywh[0]:
-            #     if (cls == 2 or cls == 3) and confidence > .5:
-            #         target = calc_target(x, y, w, h)
-            # print(target)
-            # while not on_target(AIM_CENTER, target, precision=5):
-            #     print(target)
-
-            #     # print("NOT ON TARGET.")
-            #     move_mouse(AIM_CENTER, target, speed=3)
-            targets=get_targets(results, cls=[0, 1])
-            for target in targets:
-                # target = calc_target(target)
-                pyautogui.moveTo(target.x, target.y,
-                                 tween=pyautogui.easeOutQuad)
+                pyautogui.moveTo(target.x, target.y)
                 if on_target(AIM_CENTER, target, precision=20):
                     shoot()
-                print(target)
-            # print("OUT LOOP")
+
+            # sorted_targets = sort_targets(targets, AIM_CENTER)
+            # for target in targets:
+            #     pyautogui.moveTo(target.x, target.y,
+            #                      tween=pyautogui.easeOutQuad)
+            #     if on_target(AIM_CENTER, target, precision=20):
+            #         shoot()
+
             if cv.waitKey(1) == ord('q'):
                 cv.destroyAllWindows()
                 break
