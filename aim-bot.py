@@ -75,8 +75,8 @@ def main():
             last_time = time.time()
 
             # Grab Screen
-            screenshot = sct.grab(np.array(sct.monitors[1]))
-            timestamp = datetime.now().strftime("%Y%m%d_%H-%M-%S")
+            screenshot = np.array(sct.grab(sct.monitors[1]))
+            # timestamp = datetime.now().strftime("%Y%m%d_%H-%M-%S")
 
             # Prediction
             results = model(screenshot)
