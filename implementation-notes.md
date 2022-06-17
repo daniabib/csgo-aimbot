@@ -8,6 +8,7 @@
 - melhores praticas: https://github.com/ultralytics/yolov5/wiki/Tips-for-Best-Training-Results#dataset
 
 ## Parte 3: Treino
+Playlist Yolov5
 
 ## Parte 4: Capturar tela
 https://python-mss.readthedocs.io/
@@ -30,8 +31,8 @@ Criei duas classes para representar os alvos:
 - Point: Mais geral, implementa metodos __sub__ para calcular distancias
 - Target: Armazena infos das predicoes do Yolo. Tem atributo coordinates para aproveitar o metodo sub de Point.
 
-
-
+## Parte 6: Gravar tela do aimbot
+- Precisa de multiprocessing para funcionar.
 
 ## REFERÊNCIAS
 

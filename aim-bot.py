@@ -1,4 +1,5 @@
 import time
+from datetime import datetime
 
 import torch
 from mss.linux import MSS as mss
@@ -60,44 +61,40 @@ AIM_CENTER = Point(x=960, y=540)
 
 
 def main():
-    # Load YOLOv5 with PyTorch Hub from Ultralytics
+    # Load YOLOv5 from Ultralytics with PyTorch Hub
     model = torch.hub.load("ultralytics/yolov5", "custom",
                            path="csgo-detection-v2.pt")
 
     if torch.cuda.is_available():
         model.cuda()
 
-    time.sleep(2)
-
     # MAIN LOOP
     with mss() as sct:
         # monitor = {"top": 70, "left": 80, "width": 1280, "height": 720}
         while "Screen Capturing":
             last_time = time.time()
+
             # Grab Screen
-            screenshot = np.array(sct.grab(sct.monitors[1]))
+            screenshot = sct.grab(np.array(sct.monitors[1]))
+            timestamp = datetime.now().strftime("%Y%m%d_%H-%M-%S")
 
             # Prediction
             results = model(screenshot)
+            # results = model(screenshot)
             results.render()
 
             cv.imshow('CV TEST', results.imgs[0])
 
-            targets = get_targets(results, labels=[0, 1])
-            
+            targets = get_targets(results, labels=[2, 3])
+
             if targets:
                 target = sort_targets(targets, AIM_CENTER)[0]
 
                 pyautogui.moveTo(target.x, target.y)
-                if on_target(AIM_CENTER, target, precision=20):
+                if on_target(AIM_CENTER, target, precision=10):
                     shoot()
 
-            # sorted_targets = sort_targets(targets, AIM_CENTER)
-            # for target in targets:
-            #     pyautogui.moveTo(target.x, target.y,
-            #                      tween=pyautogui.easeOutQuad)
-            #     if on_target(AIM_CENTER, target, precision=20):
-            #         shoot()
+            print("fps: {}".format(1 / (time.time() - last_time)))
 
             if cv.waitKey(1) == ord('q'):
                 cv.destroyAllWindows()
