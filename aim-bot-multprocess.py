@@ -40,7 +40,12 @@ class Target:
 
 
 AIM_CENTER = Point(x=960, y=540)
-
+# displays the frame rate every 2 second
+display_time = 1
+# set start time to current time
+start_time = time.time()
+# Set primarry FPS to 0
+fps = 0
 
 def get_targets(results: list, labels: list[int]) -> list[Target]:
     """Returns a list with results filtered by the classes specified in the labels argument."""
@@ -63,24 +68,29 @@ def shoot() -> None:
 
 
 def grab_screen(conn: Connection) -> None:
-    # with mss() as sct:
-    #     while "Screen Capturing":
-    #         screenshot = np.array(sct.grab(sct.monitors[1]))
-    #         conn.send(screenshot)
-    sct = mss()
-    while "Screen Capturing":
-        scrennshot = np.array(sct.grab(sct.monitors[1]))
-        conn.send(scrennshot)
+    with mss() as sct:
+        while "Screen Capturing":
+            screenshot = np.array(sct.grab(sct.monitors[1]))
+            conn.send(screenshot)
+    # sct = mss()
+    # while "Screen Capturing":
+    #     scrennshot = np.array(sct.grab(sct.monitors[1]))
+    #     conn.send(scrennshot)
 
 
 def show_screen(conn: Connection) -> None:
+    global start_time, fps
     while True:
         results = conn.recv()
         cv.imshow('CV TEST', results)
 
         # Calculate fps
-        # last_time = time.time()
-        # print("fps: {}".format(1 / (time.time() - last_time)))
+        fps+=1
+        TIME = time.time() - start_time
+        if (TIME) >= display_time :
+            print("FPS: ", fps / (TIME))
+            fps = 0
+            start_time = time.time()
 
         if cv.waitKey(1) == ord('q'):
             cv.destroyAllWindows()
