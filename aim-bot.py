@@ -72,15 +72,12 @@ def main():
     with mss() as sct:
         # monitor = {"top": 70, "left": 80, "width": 1280, "height": 720}
         while "Screen Capturing":
-            last_time = time.time()
-
             # Grab Screen
             screenshot = np.array(sct.grab(sct.monitors[1]))
             # timestamp = datetime.now().strftime("%Y%m%d_%H-%M-%S")
 
             # Prediction
             results = model(screenshot)
-            # results = model(screenshot)
             results.render()
 
             cv.imshow('CV TEST', results.imgs[0])
@@ -94,6 +91,8 @@ def main():
                 if on_target(AIM_CENTER, target, precision=10):
                     shoot()
 
+            # Calculate fps
+            last_time = time.time()
             print("fps: {}".format(1 / (time.time() - last_time)))
 
             if cv.waitKey(1) == ord('q'):

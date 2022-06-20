@@ -32,7 +32,9 @@ Criei duas classes para representar os alvos:
 - Target: Armazena infos das predicoes do Yolo. Tem atributo coordinates para aproveitar o metodo sub de Point.
 
 ## Parte 6: Gravar tela do aimbot
-- Precisa de multiprocessing para funcionar.
+- MElhorar performance com multiprocessing.
+https://python-mss.readthedocs.io/examples.html#multiprocessing
+https://github.com/pythonlessons/TensorFlow-object-detection-tutorial/tree/master/9_part%20grab%20screen%20multiprocessing
 
 ## REFERÊNCIAS
 

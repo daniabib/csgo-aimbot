@@ -1,4 +1,3 @@
-from gc import callbacks
 import time
 from datetime import datetime
 
@@ -20,7 +19,6 @@ with mss() as sct:
     monitor = sct.monitors[1]
 
     while "Screen Capturing":
-        print(type(Image.Resampling.LANCZOS))
         timestamp = datetime.now().strftime("%Y%m%d_%H-%M-%S")
 
         screenshot = sct.grab(monitor)
