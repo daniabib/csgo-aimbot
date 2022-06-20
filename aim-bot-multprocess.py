@@ -76,7 +76,7 @@ def grab_screen(conn: Connection) -> None:
 def show_screen(conn: Connection) -> None:
     while True:
         results = conn.recv()
-        cv.imshow('CV TEST', results.imgs[0])
+        cv.imshow('CV TEST', results)
 
         # Calculate fps
         # last_time = time.time()
@@ -118,7 +118,7 @@ def run_model(conn1: Connection, conn2: Connection) -> None:
         results.render()
 
         # Send results
-        # p_input2.send(image_np)
+        conn2.send(results.imgs[0])
 
         targets = get_targets(results, labels=[2, 3])
 
