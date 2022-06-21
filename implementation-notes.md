@@ -32,9 +32,21 @@ Criei duas classes para representar os alvos:
 - Target: Armazena infos das predicoes do Yolo. Tem atributo coordinates para aproveitar o metodo sub de Point.
 
 ## Parte 6: Gravar tela do aimbot
-- MElhorar performance com multiprocessing.
+- Melhorar performance com multiprocessing.
 https://python-mss.readthedocs.io/examples.html#multiprocessing
 https://github.com/pythonlessons/TensorFlow-object-detection-tutorial/tree/master/9_part%20grab%20screen%20multiprocessing
+
+Entender melhor como orquestrar o modelo com as operacoes I/O de capturar frame, mexer no mouse e salvar/gravar a tela.
+
+PROBLEMA: A mira com multiprocess fica "bêbada".
+
+Investigar:
+Multiprocessing: https://docs.python.org/3/library/multiprocessing.html
+
+CPU vs. I/O intensive applications: https://www.quora.com/What-determines-if-an-application-is-CPU-intensive-as-opposed-to-memory-intensive
+
+RAW Input no CS:GO: https://www.skinwallet.com/csgo/raw-input-csgo/
+
 
 ## REFERÊNCIAS
 
