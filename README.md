@@ -1,11 +1,11 @@
 # CS:GO Yolov5 Aimbot
 
-An aimbot that uses Yolov5 to play CS:GO. It is able to identify the characters from both teams
+An aimbot that uses Yolov5 to play CS:GO. It is able to identify the characters from both teams and it's heads. It uses pyautogui to handle the aim movement and mouse click.
 
 ## How To Use
 
 ### In-game configuration
-You have to turn OFF the Raw Input option in the game. With it on, the mouse signal goes straigth to the CS:GO engine without passing through the operating system. So, we need to turn if off so pyautogui can handle our mouse movement.
+You have to turn OFF the Raw Input option in the game. Otherwise, the mouse signal goes straight to the game engine without passing through the operating system and pyautogui can't handle it properly.
 
 This setting is under the Mouse & Keyboard tab:
 ![Alt-test](/img/raw-input.jpg)
