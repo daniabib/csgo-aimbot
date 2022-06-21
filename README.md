@@ -13,7 +13,7 @@ This setting is under the Mouse & Keyboard tab:
 
 ## Things I'm still implementing 
 - Record screen
-- ~~A docker-compose pipeline to simplify deployment on AWS ECS.~~ ✅
+
 
 <!-- ## Support
 
@@ -21,4 +21,3 @@ This setting is under the Mouse & Keyboard tab:
 
 
 ## Disclaimer
-This repository is just an exercise on deep learning, computer vision, and model deployment. It has no intention of having any scientific validation. Please, use it only as a code example.
