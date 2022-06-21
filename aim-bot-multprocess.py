@@ -72,10 +72,6 @@ def grab_screen(conn: Connection) -> None:
         while "Screen Capturing":
             screenshot = np.array(sct.grab(sct.monitors[1]))
             conn.send(screenshot)
-    # sct = mss()
-    # while "Screen Capturing":
-    #     scrennshot = np.array(sct.grab(sct.monitors[1]))
-    #     conn.send(scrennshot)
 
 
 def show_screen(conn: Connection) -> None:
@@ -98,17 +94,16 @@ def show_screen(conn: Connection) -> None:
 
 
 # def save_screen(conn: Connection) -> None:
-#     number = 0
-#     output = "screenshots/csgo-screenrec-{}.png"
+#     timestamp = datetime.now().strftime("%Y%m%d_%H-%M-%S")
+#     output = f"screenshots/csgo-screenrec-{timestamp}.png"
 #     to_png = mss.tools.to_png
 
 #     while "there are screenshots":
-#         img = queue.get()
+#         img = conn.recv()
 #         if img is None:
 #             break
 
 #         to_png(img.rgb, img.size, output=output.format(number))
-#         number += 1
 
 
 def run_model(conn1: Connection, conn2: Connection) -> None:
@@ -128,7 +123,7 @@ def run_model(conn1: Connection, conn2: Connection) -> None:
         results.render()
 
         # Send results
-        conn2.send(results.imgs[0])
+        # conn2.send(results.imgs[0])
 
         targets = get_targets(results, labels=[2, 3])
 
@@ -141,16 +136,6 @@ def run_model(conn1: Connection, conn2: Connection) -> None:
 
 
 if __name__ == "__main__":
-    # pipe1_output, pipe1_input = Pipe()
-    # pipe2_output, pipe2_input = Pipe()
-
-    # p1 = Process(target=grab_screen, args=(pipe1_input,))
-    # p2 = Process(target=run_model, args=(pipe1_output, pipe2_input))
-    # p3 = Process(target=show_screen, args=(pipe2_output,))
-
-    # p1.start()
-    # p2.start()
-    # p3.start()
     # Pipes
     p_output, p_input = Pipe()
     p_output2, p_input2 = Pipe()
@@ -158,9 +143,9 @@ if __name__ == "__main__":
     # creating new processes
     p1 = Process(target=grab_screen, args=(p_input,))
     p2 = Process(target=run_model, args=(p_output,p_input2,))
-    p3 = Process(target=show_screen, args=(p_output2,))
+    # p3 = Process(target=show_screen, args=(p_output2,))
 
     # starting our processes
     p1.start()
     p2.start()
-    p3.start()
+    # p3.start()
