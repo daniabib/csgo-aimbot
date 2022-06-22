@@ -11,6 +11,8 @@ This setting is under the Mouse & Keyboard tab:
 ![Alt-test](/img/raw-input.jpg)
 
 
+## How it works?
+
 ## Things I'm still implementing 
 - Record screen
 

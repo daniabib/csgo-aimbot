@@ -1,0 +1,6 @@
+mss==6.1.0
+numpy==1.22.4
+opencv-python==4.5.5.64
+pyautogui==0.9.53
+torch==1.11.0
+torchvision==0.12.0
