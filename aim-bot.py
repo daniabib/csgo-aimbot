@@ -1,10 +1,10 @@
 import time
 
-import torch
 from mss.linux import MSS as mss
 import cv2 as cv
 import numpy as np
 import pyautogui
+import torch
 
 
 class Point:
@@ -56,17 +56,14 @@ def shoot() -> None:
     pyautogui.mouseUp()
 
 
-AIM_CENTER = Point(x=960, y=540)
-# displays the frame rate every 2 second
-display_time = 1
-# set start time to current time
-start_time = time.time()
-# Set primarry FPS to 0
-fps = 0
-
 def main():
+    AIM_CENTER = Point(x=960, y=540)
+
+    # Set-up for fps calculation
+    fps = 0
+    display_time = 1
     start_time = time.time()
-    global fps
+
     # Load YOLOv5 from Ultralytics with PyTorch Hub
     model = torch.hub.load("ultralytics/yolov5", "custom",
                            path="csgo-detection-v2.pt")
@@ -76,7 +73,6 @@ def main():
 
     # MAIN LOOP
     with mss() as sct:
-        # monitor = {"top": 70, "left": 80, "width": 1280, "height": 720}
         while "Screen Capturing":
             # Grab Screen
             screenshot = np.array(sct.grab(sct.monitors[1]))
@@ -97,10 +93,10 @@ def main():
                     shoot()
 
             # Calculate fps
-            fps+=1
+            fps += 1
             TIME = time.time() - start_time
-            if (TIME) >= display_time :
-                print("FPS: ", fps / (TIME))
+            if TIME >= display_time:
+                print(f"FPS: {fps / TIME}")
                 fps = 0
                 start_time = time.time()
 
