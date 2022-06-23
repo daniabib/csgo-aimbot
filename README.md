@@ -1,8 +1,10 @@
 # CS:GO Yolov5 Aimbot
 
-An aimbot that uses Yolov5 to play CS:GO. It is able to identify the characters from both teams and it's heads. It uses pyautogui to handle the aim movement and mouse click.
+An aimbot that uses Yolov5 and PyTorch to play CS:GO. It is able to identify the characters from both teams and their heads. It uses pyautogui to handle the aim movement and mouse click.
 
 ## How To Use
+
+Currently, only Linux is supported.
 
 ### In-game configuration
 You have to turn OFF the Raw Input option in the game. Otherwise, the mouse signal goes straight to the game engine without passing through the operating system and pyautogui can't handle it properly.
@@ -10,11 +12,38 @@ You have to turn OFF the Raw Input option in the game. Otherwise, the mouse sign
 This setting is under the Mouse & Keyboard tab:
 ![Alt-test](/img/raw-input.jpg)
 
+### Installing
+To clone and install this application you will need [Git](https://git-scm.com) and [Python](https://www.python.org/downloads/).
 
-## How it works?
+```
+# Clone this repository
+git clone https://github.com/daniabib/csgo-aimbot.git
 
-## Things I'm still implementing 
-- Record screen
+# Go into the repository
+cd csgo-aimbot
+
+# Install required libraries
+pip install -r requirements.txt
+```
+
+### Running
+I suggest that the game is already open in the background before launching the model. 
+
+
+To run the app just execute the main script:
+
+```
+python aim-bot.py
+```
+
+The model will be running in the background. As soon as it detects a CS:GO character it will activate the pyautogui engine to move the mouse and shoot.
+
+
+<!-- ## How it works? -->
+
+
+<!-- ## Things I'm still implementing 
+- Record screen -->
 
 
 <!-- ## Support
@@ -23,3 +52,4 @@ This setting is under the Mouse & Keyboard tab:
 
 
 ## Disclaimer
+The intent of this repository is esclusively educational. It has no intention of being a way of cheating in the game. I advise that you use it only on your own server. If you use it in a Valve server it will probably detect suspicious activities and your account can be banned. 
