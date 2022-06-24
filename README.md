@@ -13,7 +13,7 @@ This setting is under the Mouse & Keyboard tab:
 ![Alt-test](/img/raw-input.jpg)
 
 ### Installing
-To clone and install this application you will need [Git](https://git-scm.com) and [Python](https://www.python.org/downloads/).
+To clone and install this application you will need [Git](https://git-scm.com) and [Python>=3.9.0](https://www.python.org/downloads/).
 
 ```
 # Clone this repository
