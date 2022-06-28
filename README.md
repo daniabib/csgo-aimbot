@@ -1,5 +1,7 @@
 # CS:GO Yolov5 Aimbot
 
+![Example](/img/csgo-example.gif)
+
 An aimbot that uses Yolov5 and PyTorch to play CS:GO. It is able to identify the characters from both teams and their heads. It uses pyautogui to handle the aim movement and mouse click.
 
 ## How To Use
