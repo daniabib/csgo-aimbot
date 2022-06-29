@@ -66,7 +66,7 @@ def main():
 
     # Load YOLOv5 from Ultralytics with PyTorch Hub
     model = torch.hub.load("ultralytics/yolov5", "custom",
-                           path="csgo-detection-v2.pt")
+                           path="model/csgo-detection-v2.pt")
 
     if torch.cuda.is_available():
         model.cuda()
