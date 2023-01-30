@@ -21,7 +21,7 @@ A documentação oficial nos diz que o "bom uso" da biblioteca implica em usar o
 Comecemos por um exemplo simples:
 
 ```python
-ffrom mss import mss
+from mss import mss
 from PIL import Image
 
 with mss() as sct:
@@ -31,7 +31,10 @@ with mss() as sct:
     try:
         while "Screen Capturing":
             screenshot = sct.grab(monitor)
-            image = Image.frombytes("RGB", screenshot.size, screenshot.bgra, "raw", "BGRX")
+            image = Image.frombytes("RGB",
+                                    screenshot.size,
+                                    screenshot.bgra, 
+                                    "raw", "BGRX")
             image.save(f"screenshot-{sct_number}.png")
 
             sct_number += 1
@@ -41,6 +44,14 @@ with mss() as sct:
         sct.close()
         print("Bye!")
 ```
+
+Nesse exemplo, dizemos para a MSS capturar continuamente frames do monitor principal. A propriedade `sct.monitors` lista todos os monitores disponíveis, e é importante que você escolha o monitor correto que será rodado o CS:GO. No meu caso específico será o de índice `sct.monitors[1]`. Colocamos o loop principal dentro de um bloco `try except` para que, quando interrompermos o programa, o MSS feche o processo de forma mais segura com o método `sct.close()`.
+
+O loop `while` captura os frames continuamente utilizando a função `sct.grab(monitor)`. Essa função já nos proporciona algumas propriedades úteis que serão usadas para salvar nossas imagens, como `size` e `bgra` que contém os bytes do frame capturado.
+
+Em seguida, como a própria documentação sugere, utilizamos a biblioteca Pillow (PIL) para salvar as imagens em formato PNG na mesma pasta onde nosso código está armazenado. Pillow é uma biblioteca de manipulação de imagens muito poderosa e a utilizaremos adiante para converter os frames capturados para um formato mais amigável para o YoloV5.
+
+Embora esse exemplo funcione ele tem algumas desvantegens para o nosso propósito. Primeiramente, os frames são salvos em "velocidade máxima", gerenado um número grande de imagens que não variam muito entre si. E, como veremos mais adiante, para o nosso modelo funcionar é preciso que haja uma variação considerável entre as imagens. Portanto, seria interessante que capturassemos menos frames por vez, dando chance para que a tela do nosso jogo varie mais e não sobrecarreguemos nosso banco de dados com muitas imagens semelhantes. Para isso, vamos usar `time` 
 
 ## Parte 2: Contruir base de dados
 - OpenLabelling
