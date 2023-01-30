@@ -7,24 +7,39 @@
 
 Hoje vamos começar uma série de tutorias onde ensinaremos como criar um modelo de deep learning capaz de identificar e acertar alvos no jogo CS:GO. 
 
-Iremos percorrer todo o processo básico para ciraçnao de um modelo de detecção de objetos: desde a coleta das imagens, passando pela contrução do banco de dados até chegar no deploy do modelo para inferência. Para isso iremos usar o Pytorch e, como base, o modelo YoloV5 e suas capacidades de detecção de objetos. 
+Nessa série iremos percorrer todo o processo básico para ciração de um modelo de detecção de objetos: desde a coleta das imagens, passando pela contrução do banco de dados até chegar no deploy do modelo para inferência. Para isso iremos usar o Pytorch e, como base, as capacidades de detecção de objetos do modelo YoloV5. 
 
 
-Neste primeiro tutorial iremos aprender a como capturar os frames do jogo de forma eficiente. Um modelo de detectção de objetos (assim como qualquer outro modelo de aprendizagem profunda) exige um banco de dados extenso e de qualidade. 
+Neste primeiro tutorial iremos aprender a como capturar os frames do jogo de forma eficiente. Aprimeira coisa a se fazer é juntar material bruto suficiente para que nosso modelo aprenda as 'features' necessárias para realizir a tarefa que desajamos. Paara isso, precisamos de um banco de dados com exemplos suficientes e de qualidade. 
 
-Podemos capturar os frames de diversas maneiras, como por exemplo gravar a tela enquanto jogamos algumas partidas e depois extrair as partes que nos interessam e converter para images JPEG ou PNG. Mas gostariamos de mostrar aqui uma forma mais programática e eficiente de realizar essa tarefa.
+No nosso caso, o material bruto do nosso dataset serão os frames do jogo. Podemos capturar os frames de diversas maneiras, como por exemplo gravar a tela enquanto jogamos algumas partidas e depois extrair as partes que nos interessam e converter para images JPEG ou PNG. Mas gostariamos de mostrar aqui uma forma mais programática e eficiente de realizar essa tarefa.
 
-Usaremos a biblioteca MSS do Python. MSS é uma biblioteca extremamente eficiente para a captura de frames, tendo a capacidade de capturar multiplas telas ao mesmo tempo. Além disso ela suporta multiplas plataformas. O que para nós é uma vantagem já que CS:GO também é multiplataformas, suportando Linux, MacOS e Linux.
+Usaremos a biblioteca MSS do Python. MSS é uma biblioteca extremamente eficiente para a captura de frames, tendo a capacidade de capturar multiplas telas ao mesmo tempo. Além disso ela suporta multiplas plataformas. O que para nós é uma vantagem já que CS:GO também é multiplataformas, suportando Linux, MacOS e Windows.
 
 A documentação oficial nos diz que o "bom uso" da biblioteca implica em usar o context manager do Python para lidar com o processo de captura de tela. A keyword `with` permite que recursos externos ao nosso código (no nosso caso o video stream do nosso monitor) sejam gerenciados de forma eficiente e segura.
 
 Comecemos por um exemplo simples:
 
 ```python
-from mss import mss
+ffrom mss import mss
+from PIL import Image
 
-with mss():
-    
+with mss() as sct:
+    sct_number = 0
+    monitor = sct.monitors[1]
+
+    try:
+        while "Screen Capturing":
+            screenshot = sct.grab(monitor)
+            image = Image.frombytes("RGB", screenshot.size, screenshot.bgra, "raw", "BGRX")
+            image.save(f"screenshot-{sct_number}.png")
+
+            sct_number += 1
+
+    except KeyboardInterrupt:
+        print("\nEnding screen print.")
+        sct.close()
+        print("Bye!")
 ```
 
 ## Parte 2: Contruir base de dados
