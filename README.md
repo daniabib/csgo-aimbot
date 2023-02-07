@@ -54,4 +54,4 @@ The model will be running in the background. As soon as it detects a CS:GO chara
 
 
 ## Disclaimer
-The intent of this repository is esclusively educational. It has no intention of being a way of cheating in the game. I advise that you use it only on your own server. If you use it in a Valve server it will probably detect suspicious activities and your account can be banned. 
+The intent of this repository is exclusively educational. It has no intention of being a way of cheating in the game. I advise that you use it only on your own server. If you use it in a Valve server it will probably detect suspicious activities and your account can be banned.
